@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from 'type-graphql'
+import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql'
 import { getModelForClass, prop as Prop, Ref } from '@typegoose/typegoose'
 import PaginatedResponse from './pagination.schema'
 import { BaseModel } from './model.schema'
@@ -6,7 +6,11 @@ import { IsDate, MaxLength } from 'class-validator'
 import { Country } from './country.schema'
 import { Types } from 'mongoose'
 import { ObjectIdScalar } from '../object-id.scalar'
+import { TerrainType } from '../enums/terrain-type'
 
+registerEnumType(TerrainType, {
+  name: 'TerrainType',
+})
 @ObjectType()
 export class Tournament extends BaseModel {
 
@@ -14,9 +18,9 @@ export class Tournament extends BaseModel {
     @Field()
       name: string
 
-    @Prop({ required: true })
-    @Field()
-      terrain: string
+    @Prop({ type: [String], enum: TerrainType })
+    @Field(() => [TerrainType])
+     terrain: TerrainType[]
 
     @Field(() => Date)
     @Prop({ required: true })
@@ -47,10 +51,6 @@ export const TournamentModel = getModelForClass(Tournament,
       @MaxLength(30)
       name: string
 
-      @Field()
-      @MaxLength(20)
-      terrain: string
-
       @IsDate()
       @Field(() => Date)
       tournamentDate: Date
@@ -62,6 +62,9 @@ export const TournamentModel = getModelForClass(Tournament,
   
   @InputType()
   export class CreateTournamentInput extends TournamentInput {
+
+    @Field(() => [TerrainType])
+    terrain: TerrainType[]
 
     @Field()
       points: number

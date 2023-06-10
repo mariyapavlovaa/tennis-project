@@ -64,7 +64,7 @@ export const TournamentModel = getModelForClass(Tournament,
   export class CreateTournamentInput extends TournamentInput {
 
     @Field(() => [TerrainType])
-    terrain: TerrainType[]
+    terrain: TerrainType
 
     @Field()
       points: number
